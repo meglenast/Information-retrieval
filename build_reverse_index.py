@@ -2,7 +2,7 @@
 
 Usage:
   build_reverse_index.py -f [FILE ...]
-  build_reverse_index.py ship -d <directory>
+  build_reverse_index.py -c <corpus>
   build_reverse_index.py (-h | --help)
 
 Options:
@@ -16,5 +16,6 @@ from utils import reverse_index as RI
 if __name__ == '__main__':
     arguments = docopt(__doc__)
     files = arguments['FILE']
-    r = RI.ReverseIndex(files)
-    
+    corpus = arguments['<corpus>']
+
+    r = RI.ReverseIndex(files) if files != [] else RI.ReverseIndex(corpus)

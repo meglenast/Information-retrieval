@@ -1,3 +1,5 @@
+import json
+
 from nltk.corpus import PlaintextCorpusReader
 from typing import List
 
@@ -7,9 +9,9 @@ from .logger import Logger
 class ReverseIndex:
     def __init__(self, source):
         if type(source) is list:
-            self.r_idex = self.build_r_index_from_files(source)
+            self.build_r_index_from_files(source)
         elif type(source) is str:
-            self.r_idex = self.build_r_index_from_corpus(source)
+            self.build_r_index_from_corpus(source)
         else:
             Logger.error("Invalid source to build reverse index from.")
             raise TypeError("[Error]: Invalid source to build reverse index from.")
@@ -25,12 +27,18 @@ class ReverseIndex:
                     ri[word] = [idx]
                 else:
                     (ri[word]).append(idx)
-
-        print(ri)
+        self.ri = ri
 
     def build_r_index_from_corpus(self, corpus_path):
         Logger.info("Building reverse index from corpus")
-        corpus = PlaintextCorpusReader(corpus_path, '.*\.txt')
-        files = [ f"{corpus_path}/" + file for file in corpus.fileids()]
+        self.corpus = PlaintextCorpusReader(corpus_path, '.*\.txt')
+        self.files = [ f"{corpus_path}/" + file for file in self.corpus.fileids()]
+        self.build_r_index_from_files(self.files)
 
-        ri = self.build_r_index_from_files(files)
+    def serialize_to_txt(self, file_name: str):
+        with open(file_name, "w") as f:
+            for key, value in self.ri.items():
+                f.write("%s:%s\n" % (key, value))
+
+    def display(self):
+        print(self.ri)

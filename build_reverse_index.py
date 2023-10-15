@@ -19,4 +19,5 @@ if __name__ == '__main__':
     output_file = arguments['<output_file>']
 
     r = RI.ReverseIndex(files) if files != [] else RI.ReverseIndex(corpus)
-    r.serialize_to_txt(output_file)
+
+    print(res)

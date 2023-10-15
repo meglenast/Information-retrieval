@@ -1,5 +1,3 @@
-import json
-
 from nltk.corpus import PlaintextCorpusReader
 from typing import List
 
@@ -16,7 +14,7 @@ class ReverseIndex:
             Logger.error("Invalid source to build reverse index from.")
             raise TypeError("[Error]: Invalid source to build reverse index from.")
 
-    def build_r_index_from_files(self, files: List[str]):
+    def __build_r_index_from_files__(self, files: List[str]):
         Logger.info("Building reverse index from files list")
 
         ri = {}
@@ -29,7 +27,7 @@ class ReverseIndex:
                     (ri[word]).append(idx)
         self.ri = ri
 
-    def build_r_index_from_corpus(self, corpus_path):
+    def __build_r_index_from_corpus__(self, corpus_path):
         Logger.info("Building reverse index from corpus")
         self.corpus = PlaintextCorpusReader(corpus_path, '.*\.txt')
         self.files = [ f"{corpus_path}/" + file for file in self.corpus.fileids()]
@@ -41,7 +39,7 @@ class ReverseIndex:
 
         return self.lst1_and_lst2(lst1, lst2)
 
-    def lst1_and_lst2(self, lst1, lst2):
+    def __lst1_and_lst2__(self, lst1, lst2):
         ptr1 = ptr2 = 0
         result = []
 
@@ -62,7 +60,7 @@ class ReverseIndex:
 
         return self.lst1_or_lst2(lst1, lst2)
 
-    def lst1_or_lst2(self, lst1, lst2):
+    def __lst1_or_lst2__(self, lst1, lst2):
         ptr1 = ptr2 = 0
         result = []
 
@@ -85,7 +83,7 @@ class ReverseIndex:
 
         return self.lst1_and_not_lst2(lst1, lst2)
 
-    def lst1_and_not_lst2(self, lst1, lst2):
+    def __lst1_and_not_lst2__(self, lst1, lst2):
         ptr1 = ptr2 = 0
         result = []
 
@@ -110,7 +108,7 @@ class ReverseIndex:
 
         return self.lst1_or_not_lst2(lst1, lst2)
 
-    def lst1_or_not_lst2(self, lst1, lst2):
+    def __lst1_or_not_lst2__(self, lst1, lst2):
         result = set(lst1);
         ri_size = len(self.ri)
 
@@ -119,6 +117,23 @@ class ReverseIndex:
                 result.add(i)
 
         return list(result)
+
+    def combine_with_and(self, terms: list[str]):
+        self.combine_with_operator(terms, self.lst1_and_lst2)
+
+    def combine_with_or(self, terms: list[str]):
+        self.combine_with_operator(terms, self.lst1_or_lst2)
+
+    def __combine_with_operator__(self, terms: list[str], op: function):
+        try:
+            lists =  [self.ri[term] for term in terms]
+        except:
+            raise KeyError("Invalid reverse index key")
+        lists = sorted(lists, key = lambda x : len(x))
+        result = lists[0]
+        for i in range(1, len(lists)):
+            result = op(result, lists[i])
+        return result
 
     def serialize_to_txt(self, file_name: str):
         with open(file_name, "w") as f:

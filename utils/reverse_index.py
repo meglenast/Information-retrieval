@@ -124,7 +124,7 @@ class ReverseIndex:
     def combine_with_or(self, terms: list[str]):
         self.combine_with_operator(terms, self.lst1_or_lst2)
 
-    def __combine_with_operator__(self, terms: list[str], op: function):
+    def __combine_with_operator__(self, terms: list[str], op):
         try:
             lists =  [self.ri[term] for term in terms]
         except:

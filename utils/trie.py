@@ -29,7 +29,27 @@ class Trie:
             state = self.transitions[state][word[symbols_read]]
             symbols_read += 1
         return state, symbols_read
-    
+
+    def isFinal(self, s):
+        return s in self.final_states
+
+    def is_in_trie(self, word: str):
+        s, i = self.traverse(word)
+        return i == len(word) and self.isFinal(s)
+
+    def lst_words_with_prefix(self, prefix: str):
+        s, i = self.traverse(prefix)
+        return [ prefix + sufix for sufix in self.get_language_of_state(s)]
+
+    def get_language_of_state(self, s):
+        language = []
+        if s in self.final_states:
+            return language
+        transitions_from_s = self.transitions[s]
+        for (symbol, destination) in transitions_from_s.items():
+            language += [ symbol + word for word in self.get_language_of_state(destination) ]
+        return language
+
     def display(self):
         print("Transitions: ", self.transitions)
         print("Final states: ", self.final_states)

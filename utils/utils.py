@@ -17,6 +17,9 @@ def print_documents(corpus, file_names, ids):
             print(word,end=' ')
         print('\n')
 
+def tokenize_file(text):
+    return set([token.lower() for token in text if token.isalpha()])
+
 # Splits corpus into training set and testing set
 def split_class_corpus(corpus_per_classes: dict, test_fraction = 0.1):
     test_corpus = []
